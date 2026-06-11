@@ -1,0 +1,132 @@
+<mxfile host="Electron">
+  <diagram id="LRUmRot-ZA3UM2yfzguU" name="Error Flow">
+    <mxGraphModel dx="645" dy="520" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="glTin_JjvYRQg3J_6gBN-1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" value="Error Flow: Agent Failure Handling" vertex="1">
+          <mxGeometry height="30" width="400" x="350" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="Agent makes&#xa;HTTP request" vertex="1">
+          <mxGeometry height="50" width="140" x="470" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-3" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" value="Request&#xa;successful?" vertex="1">
+          <mxGeometry height="80" width="130" x="475" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-4" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" target="glTin_JjvYRQg3J_6gBN-3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" value="Parse response" vertex="1">
+          <mxGeometry height="50" width="120" x="200" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-6" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;fontColor=#008000;strokeColor=#008000;" target="glTin_JjvYRQg3J_6gBN-5" value="Yes (200 OK)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;fontSize=11;" value="• status = &#39;up&#39;&#xa;• latency_ms = 145&#xa;• status_code = 200" vertex="1">
+          <mxGeometry height="60" width="160" x="180" y="235" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-8" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" target="glTin_JjvYRQg3J_6gBN-7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1" value="Exception Types" vertex="1">
+          <mxGeometry height="30" width="120" x="700" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-10" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;fontColor=#FF0000;strokeColor=#FF0000;" target="glTin_JjvYRQg3J_6gBN-9" value="No (Timeout/Error)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" value="Timeout&#xa;(5 seconds)" vertex="1">
+          <mxGeometry height="40" width="100" x="680" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" value="Connection&#xa;Error" vertex="1">
+          <mxGeometry height="40" width="100" x="800" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" value="DNS&#xa;Error" vertex="1">
+          <mxGeometry height="40" width="100" x="920" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-14" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" target="glTin_JjvYRQg3J_6gBN-11" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-15" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" target="glTin_JjvYRQg3J_6gBN-12" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-16" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" target="glTin_JjvYRQg3J_6gBN-13" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;fontSize=11;fontStyle=1" value="Agent records:" vertex="1">
+          <mxGeometry height="20" width="160" x="780" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-18" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" target="glTin_JjvYRQg3J_6gBN-17" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;fontSize=11;" value="• status = &#39;down&#39;&#xa;• error_message = str(e)&#xa;• latency_ms = NULL&#xa;• status_code = NULL" vertex="1">
+          <mxGeometry height="70" width="220" x="750" y="295" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-20" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1" value="Agent writes to&#xa;SQLite Database" vertex="1">
+          <mxGeometry height="50" width="180" x="430" y="365" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-21" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" target="glTin_JjvYRQg3J_6gBN-20" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-22" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" target="glTin_JjvYRQg3J_6gBN-20" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-23" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1" value="⚠️ ALWAYS writes to DB&#xa;(even on failure)" vertex="1">
+          <mxGeometry height="50" width="160" x="660" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-24" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;dashed=1;" target="glTin_JjvYRQg3J_6gBN-23" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-25" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;fontFamily=Courier New;fontSize=10;" value="INSERT INTO checks&#xa;(endpoint_id, timestamp, status,&#xa; latency_ms, error_message)" vertex="1">
+          <mxGeometry height="60" width="250" x="400" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-26" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" target="glTin_JjvYRQg3J_6gBN-25" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-27" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="Dashboard queries&#xa;checks table" vertex="1">
+          <mxGeometry height="50" width="160" x="440" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-28" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" target="glTin_JjvYRQg3J_6gBN-27" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-29" parent="1" style="shape=document;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontStyle=1" value="Browser Dashboard Display" vertex="1">
+          <mxGeometry height="50" width="180" x="430" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-30" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;" target="glTin_JjvYRQg3J_6gBN-29" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-31" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" value="Shows 🟢 GREEN&#xa;&#39;UP&#39; status" vertex="1">
+          <mxGeometry height="40" width="120" x="150" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-32" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" value="Shows 🔴 RED&#xa;&#39;DOWN&#39; + error tooltip" vertex="1">
+          <mxGeometry height="40" width="160" x="760" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-33" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#008000;" target="glTin_JjvYRQg3J_6gBN-31" value="If status=&#39;up&#39;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-34" edge="1" parent="1" source="glTin_JjvYRQg3J_6gBN-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#FF0000;" target="glTin_JjvYRQg3J_6gBN-32" value="If status=&#39;down&#39;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-35" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1" value="Legend" vertex="1">
+          <mxGeometry height="120" width="120" x="30" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-36" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="Success Path" vertex="1">
+          <mxGeometry height="20" width="100" x="40" y="645" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Failure Path" vertex="1">
+          <mxGeometry height="20" width="100" x="40" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="glTin_JjvYRQg3J_6gBN-38" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" value="Note/Comment" vertex="1">
+          <mxGeometry height="20" width="100" x="40" y="695" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
