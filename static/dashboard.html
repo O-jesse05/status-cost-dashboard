@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Monitor Dashboard</title>
+    
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* ============================================
+           RESET & BASE STYLES
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            color: #1a1a2e;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* ============================================
+           HEADER
+           ============================================ */
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        
+        .header .status-badge {
+            font-size: 14px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: 500;
+        }
+        
+        .header .status-badge.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        /* ============================================
+           STATS CARDS ROW
+           ============================================ */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+        
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        
+        .stat-card .label {
+            font-size: 13px;
+            color: #757575;
+            margin-top: 4px;
+        }
+        
+        .stat-card .number.green { color: #2e7d32; }
+        .stat-card .number.red { color: #c62828; }
+        .stat-card .number.blue { color: #1565c0; }
+        
+        /* ============================================
+           ENDPOINT CARDS
+           ============================================ */
+        .endpoint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .endpoint-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border-left: 5px solid #4caf50;
+            transition: transform 0.1s;
+        }
+        
+        .endpoint-card.down {
+            border-left-color: #ef5350;
+            background: #fff8f8;
+        }
+        
+        .endpoint-card.unknown {
+            border-left-color: #ffa726;
+            background: #fffbf5;
+        }
+        
+        .endpoint-card .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .endpoint-card .name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .endpoint-card .status-badge {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-badge.up {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-badge.down {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .status-badge.unknown {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        .endpoint-card .url {
+            font-size: 13px;
+            color: #757575;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+        
+        .endpoint-card .details {
+            display: flex;
+            gap: 24px;
+            font-size: 13px;
+            color: #424242;
+            flex-wrap: wrap;
+        }
+        
+        .endpoint-card .details .label {
+            color: #9e9e9e;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .endpoint-card .details .value {
+            font-weight: 600;
+        }
+        
+        .endpoint-card .details .value.good { color: #2e7d32; }
+        .endpoint-card .details .value.bad { color: #c62828; }
+        .endpoint-card .details .value.warning { color: #e65100; }
+        
+        /* ============================================
+           GRAPHS SECTION
+           ============================================ */
+        .graph-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 24px;
+        }
+        
+        .graph-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .graph-section .chart-container {
+            position: relative;
+            height: 250px;
+        }
+        
+        .graph-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .graph-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ============================================
+           REFRESH BUTTON
+           ============================================ */
+        .refresh-btn {
+            background: #1565c0;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .refresh-btn:hover {
+            background: #0d47a1;
+        }
+        
+        .refresh-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* ============================================
+           LOADING STATE
+           ============================================ */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #757575;
+            font-size: 16px;
+        }
+        
+        .loading .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #e0e0e0;
+            border-top: 3px solid #1565c0;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 12px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ============================================
+           ADD ENDPOINT FORM
+           ============================================ */
+        .add-form {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 24px;
+        }
+        
+        .add-form .form-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .add-form input {
+            flex: 1;
+            min-width: 150px;
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .add-form input:focus {
+            outline: none;
+            border-color: #1565c0;
+        }
+        
+        .add-form .btn-primary {
+            background: #1565c0;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .add-form .btn-primary:hover {
+            background: #0d47a1;
+        }
+        
+        .add-form .api-key-input {
+            flex: 0 0 200px;
+        }
+        
+        .add-form .message {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #2e7d32;
+        }
+        
+        .add-form .message.error {
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        
+        <!-- ============================================
+             HEADER
+             ============================================ -->
+        <div class="header">
+            <h1>📊 Status Monitor</h1>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <span id="lastUpdated" style="font-size: 13px; color: #757575;">Loading...</span>
+                <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+            </div>
+        </div>
+        
+        <!-- ============================================
+             STATS ROW
+             ============================================ -->
+        <div class="stats-row" id="statsRow">
+            <div class="stat-card">
+                <div class="number blue" id="totalEndpoints">-</div>
+                <div class="label">Total Endpoints</div>
+            </div>
+            <div class="stat-card">
+                <div class="number green" id="upCount">-</div>
+                <div class="label">Up</div>
+            </div>
+            <div class="stat-card">
+                <div class="number red" id="downCount">-</div>
+                <div class="label">Down</div>
+            </div>
+            <div class="stat-card">
+                <div class="number blue" id="avgUptime">-</div>
+                <div class="label">Avg 24h Uptime</div>
+            </div>
+        </div>
+        
+        <!-- ============================================
+           ADD ENDPOINT FORM (Admin)
+           ============================================ -->
+        <div class="add-form">
+            <h4 style="margin-bottom: 12px;">➕ Add New Endpoint</h4>
+            <div class="form-row">
+                <input type="text" id="endpointName" placeholder="Name (e.g., Payment API)">
+                <input type="text" id="endpointUrl" placeholder="URL (e.g., https://api.example.com/health)">
+                <input type="password" id="adminApiKey" placeholder="API Key" class="api-key-input">
+                <button class="btn-primary" onclick="addEndpoint()">Add</button>
+            </div>
+            <div id="addMessage" class="message"></div>
+        </div>
+        
+        <!-- ============================================
+           ENDPOINT CARDS
+           ============================================ -->
+        <div id="endpointGrid" class="endpoint-grid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <div>Loading endpoints...</div>
+            </div>
+        </div>
+        
+        <!-- ============================================
+           GRAPHS
+           ============================================ -->
+        <div class="graph-grid">
+            <div class="graph-section">
+                <h3>📈 Latency History (24h)</h3>
+                <div class="chart-container">
+                    <canvas id="latencyChart"></canvas>
+                </div>
+            </div>
+            <div class="graph-section">
+                <h3>💰 Daily Costs</h3>
+                <div class="chart-container">
+                    <canvas id="costChart"></canvas>
+                </div>
+                <p style="font-size: 12px; color: #757575; margin-top: 8px;">
+                    Import CSV via <code>POST /api/costs/import</code>
+                </p>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- ============================================
+       JAVASCRIPT
+       ============================================ -->
+    <script>
+        // ============================================
+        // STATE
+        // ============================================
+        let latencyChart = null;
+        let costChart = null;
+        let refreshInterval = null;
+        
+        // ============================================
+        // API CALLS
+        // ============================================
+        const API_BASE = window.location.origin;
+        
+        async function fetchJSON(url) {
+            const response = await fetch(`${API_BASE}${url}`);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        }
+        
+        // ============================================
+        // LOAD DATA
+        // ============================================
+        async function loadData() {
+            const btn = document.querySelector('.refresh-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Loading...';
+            
+            try {
+                // Load all data in parallel
+                const [endpointsData] = await Promise.all([
+                    fetchJSON('/api/endpoints'),
+                    // Add cost data when implemented
+                ]);
+                
+                // Update stats and cards
+                renderEndpoints(endpointsData.endpoints);
+                updateStats(endpointsData.endpoints);
+                updateLastUpdated();
+                
+                // Load history for first endpoint (if exists)
+                if (endpointsData.endpoints && endpointsData.endpoints.length > 0) {
+                    const firstId = endpointsData.endpoints[0].id;
+                    loadHistory(firstId);
+                }
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('endpointGrid').innerHTML = `
+                    <div style="text-align:center;padding:40px;color:#c62828;">
+                        ❌ Failed to load data: ${error.message}
+                        <br><br>
+                        <button onclick="loadData()" style="padding:8px 20px;border:none;background:#1565c0;color:white;border-radius:8px;cursor:pointer;">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '↻ Refresh';
+            }
+        }
+        
+        // ============================================
+        // RENDER ENDPOINTS
+        // ============================================
+        function renderEndpoints(endpoints) {
+            const grid = document.getElementById('endpointGrid');
+            
+            if (!endpoints || endpoints.length === 0) {
+                grid.innerHTML = `
+                    <div style="text-align:center;padding:40px;color:#757575;grid-column:1/-1;">
+                        No endpoints configured. Add one using the form above.
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = endpoints.map(ep => {
+                const status = ep.current_status || 'unknown';
+                const statusClass = status === 'up' ? 'up' : (status === 'down' ? 'down' : 'unknown');
+                const cardClass = status === 'down' ? 'down' : (status === 'unknown' ? 'unknown' : '');
+                const uptime = ep.uptime_24h !== undefined ? ep.uptime_24h : 100;
+                const uptimeClass = uptime >= 99 ? 'good' : (uptime >= 95 ? 'warning' : 'bad');
+                const latency = ep.avg_latency_ms !== null ? ep.avg_latency_ms : '—';
+                
+                return `
+                    <div class="endpoint-card ${cardClass}">
+                        <div class="top-row">
+                            <span class="name">${escapeHtml(ep.name)}</span>
+                            <span class="status-badge ${statusClass}">${status}</span>
+                        </div>
+                        <div class="url">${escapeHtml(ep.url)}</div>
+                        <div class="details">
+                            <div>
+                                <div class="label">Uptime (24h)</div>
+                                <div class="value ${uptimeClass}">${uptime}%</div>
+                            </div>
+                            <div>
+                                <div class="label">Avg Latency</div>
+                                <div class="value">${latency !== '—' ? latency + 'ms' : '—'}</div>
+                            </div>
+                            <div>
+                                <div class="label">Last Check</div>
+                                <div class="value">${ep.last_check ? timeAgo(ep.last_check) : '—'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // ============================================
+        // UPDATE STATS
+        // ============================================
+        function updateStats(endpoints) {
+            const total = endpoints ? endpoints.length : 0;
+            const up = endpoints ? endpoints.filter(e => e.current_status === 'up').length : 0;
+            const down = endpoints ? endpoints.filter(e => e.current_status === 'down').length : 0;
+            
+            document.getElementById('totalEndpoints').textContent = total;
+            document.getElementById('upCount').textContent = up;
+            document.getElementById('downCount').textContent = down;
+            
+            // Average uptime
+            if (endpoints && endpoints.length > 0) {
+                const avg = endpoints.reduce((sum, e) => sum + (e.uptime_24h || 100), 0) / endpoints.length;
+                document.getElementById('avgUptime').textContent = avg.toFixed(1) + '%';
+            } else {
+                document.getElementById('avgUptime').textContent = '—';
+            }
+        }
+        
+        // ============================================
+        // LOAD HISTORY (for graph)
+        // ============================================
+        async function loadHistory(endpointId) {
+            try {
+                const data = await fetchJSON(`/api/history/${endpointId}?hours=24`);
+                renderLatencyChart(data);
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+        
+        // ============================================
+        // RENDER LATENCY CHART
+        // ============================================
+        function renderLatencyChart(data) {
+            const ctx = document.getElementById('latencyChart').getContext('2d');
+            
+            // Limit to last 120 points (2 hours) for readability
+            const maxPoints = 120;
+            const timestamps = data.timestamps.slice(-maxPoints);
+            const latencies = data.latencies_ms.slice(-maxPoints);
+            
+            // Format timestamps as HH:MM
+            const labels = timestamps.map(ts => {
+                const d = new Date(ts);
+                return d.toTimeString().slice(0, 5);
+            });
+            
+            if (latencyChart) {
+                latencyChart.destroy();
+            }
+            
+            latencyChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Latency (ms)',
+                        data: latencies,
+                        borderColor: '#1565c0',
+                        backgroundColor: 'rgba(21, 101, 192, 0.1)',
+                        fill: true,
+                        tension: 0.1,
+                        pointRadius: 0,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { maxTicksLimit: 12 }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // ============================================
+        // ADD ENDPOINT
+        // ============================================
+        async function addEndpoint() {
+            const name = document.getElementById('endpointName').value.trim();
+            const url = document.getElementById('endpointUrl').value.trim();
+            const apiKey = document.getElementById('adminApiKey').value.trim();
+            const msg = document.getElementById('addMessage');
+            
+            // Validation
+            if (!name || !url || !apiKey) {
+                msg.textContent = '❌ Please fill in all fields';
+                msg.className = 'message error';
+                return;
+            }
+            
+            // Basic URL validation
+            try {
+                new URL(url);
+            } catch {
+                msg.textContent = '❌ Invalid URL (include https://)';
+                msg.className = 'message error';
+                return;
+            }
+            
+            msg.textContent = '⏳ Adding...';
+            msg.className = 'message';
+            
+            try {
+                const response = await fetch('/api/endpoints', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': apiKey
+                    },
+                    body: JSON.stringify({ name, url })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    msg.textContent = '✅ Endpoint added successfully! Refreshing...';
+                    msg.className = 'message';
+                    document.getElementById('endpointName').value = '';
+                    document.getElementById('endpointUrl').value = '';
+                    document.getElementById('adminApiKey').value = '';
+                    setTimeout(loadData, 1000);
+                } else {
+                    msg.textContent = `❌ Error: ${result.detail || 'Unknown error'}`;
+                    msg.className = 'message error';
+                }
+            } catch (error) {
+                msg.textContent = `❌ Network error: ${error.message}`;
+                msg.className = 'message error';
+            }
+        }
+        
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function timeAgo(dateString) {
+            const now = new Date();
+            const past = new Date(dateString);
+            const diffMs = now - past;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            const diffHours = Math.floor(diffMins / 60);
+            if (diffHours < 24) return `${diffHours}h ago`;
+            return `${Math.floor(diffHours / 24)}d ago`;
+        }
+        
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = `Last updated: ${now.toTimeString().slice(0, 8)}`;
+        }
+        
+        // ============================================
+        // AUTO-REFRESH (every 30 seconds)
+        // ============================================
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(loadData, 30000);
+        }
+        
+        // ============================================
+        // ENTER KEY SUPPORT FOR FORM
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('endpointUrl').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') addEndpoint();
+            });
+            document.getElementById('adminApiKey').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') addEndpoint();
+            });
+        });
+        
+        // ============================================
+        // INIT
+        // ============================================
+        loadData();
+        startAutoRefresh();
+    </script>
+</body>
+</html>
